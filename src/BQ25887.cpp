@@ -1534,8 +1534,8 @@ void BQ25887::setTOPOFF_TIMER(uint8_t topOffTimer){
 	regValue = (regValue & 0b11001111);
 	switch(topOffTimer){
 		case 1:										//if it is 1 set it to (15min)
-			break;
 			regValue = (regValue | 0b00010000);
+			break;
 		case 2:										//if it is 2 set it to (30min)
 			regValue = (regValue | 0b00100000);
 			break;
@@ -2080,6 +2080,7 @@ uint32_t BQ25887::read32(uint8_t reg){
 	uint8_t byte1 = 0;
 	uint8_t byte2 = 0;
 	uint8_t byte3 = 0;
+	uint32_t returnValue = 0;
 	
 	Wire.beginTransmission(BQ25887_I2C_ADDRESS);
 	Wire.write(reg);
@@ -2091,7 +2092,14 @@ uint32_t BQ25887::read32(uint8_t reg){
 	byte2 = Wire.read();
 	byte3 = Wire.read();
 	
-	return (byte3 << 24) | (byte2 << 16) | (byte1 << 8) | byte0;
+	returnValue += (uint32_t)byte3 << 24;
+	returnValue += (uint32_t)byte2 << 16;
+	returnValue += (uint32_t)byte1 << 8;
+	returnValue += byte0;
+	
+	return returnValue;
+	
+	//return (byte3 << 24) | (byte2 << 16) | (byte1 << 8) | byte0;
 }
 
 int16_t BQ25887::readADC(uint8_t reg){
